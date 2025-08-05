@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Voting System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      font-size: 16px;
+      margin: 10px;
+      padding: 10px 20px;
+    }
+    #message {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+    #results {
+      margin-top: 30px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Cast Your Vote</h1>
+  <button onclick="vote('A')">Vote Candidate A</button>
+  <button onclick="vote('B')">Vote Candidate B</button>
+
+  <div id="message"></div>
+  <div id="results"></div>
+
+  <script>
+    let votesA = 0;
+    let votesB = 0;
+    let hasVoted = false;
+
+    function vote(candidate) {
+      if (hasVoted) {
+        document.getElementById("message").innerText = "You have already voted!";
+        return;
+      }
+
+      if (candidate === 'A') {
+        votesA++;
+        document.getElementById("message").innerText = "You voted for Candidate A";
+      } else if (candidate === 'B') {
+        votesB++;
+        document.getElementById("message").innerText = "You voted for Candidate B";
+      }
+
+      hasVoted = true;
+
+      // Show updated vote counts
+      document.getElementById("results").innerHTML = `
+        <p>Candidate A: ${votesA} vote(s)</p>
+        <p>Candidate B: ${votesB} vote(s)</p>
+      `;
+    }
+  </script>
+
+</body>
+</html>
