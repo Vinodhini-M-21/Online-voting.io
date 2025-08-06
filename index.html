@@ -2,66 +2,48 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Voting System</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    button {
-      font-size: 16px;
-      margin: 10px;
-      padding: 10px 20px;
-    }
-    #message {
-      margin-top: 20px;
-      font-weight: bold;
-      color: green;
-    }
-    #results {
-      margin-top: 30px;
-      font-size: 18px;
-    }
-  </style>
+  <title>Online Voting System</title>
 </head>
 <body>
 
-  <h1>Cast Your Vote</h1>
-  <button onclick="vote('A')">Vote Candidate A</button>
-  <button onclick="vote('B')">Vote Candidate B</button>
+  <h1>Register Voter</h1>
+  <form id="voterForm">
+    <label for="voterId">Voter ID:</label>
+    <input type="text" id="voterId" required><br><br>
 
-  <div id="message"></div>
-  <div id="results"></div>
+    <label for="name">Name:</label>
+    <input type="text" id="name" required><br><br>
 
-  <script>
-    let votesA = 0;
-    let votesB = 0;
-    let hasVoted = false;
+    <label for="age">Age:</label>
+    <input type="number" id="age" required><br><br>
 
-    function vote(candidate) {
-      if (hasVoted) {
-        document.getElementById("message").innerText = "You have already voted!";
-        return;
-      }
+    <button type="submit">Submit</button>
+  </form>
 
-      if (candidate === 'A') {
-        votesA++;
-        document.getElementById("message").innerText = "You voted for Candidate A";
-      } else if (candidate === 'B') {
-        votesB++;
-        document.getElementById("message").innerText = "You voted for Candidate B";
-      }
+  <!-- Firebase SDKs and App Initialization -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-      hasVoted = true;
+    // Firebase config (DO NOT share this publicly)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCsUz3pBqFgGmCRw6SIAdxlRb3zfSFYNq8",
+      authDomain: "online-voting-system-49fdb.firebaseapp.com",
+      databaseURL: "https://online-voting-system-49fdb-default-rtdb.firebaseio.com",
+      projectId: "online-voting-system-49fdb",
+      storageBucket: "online-voting-system-49fdb.appspot.com",
+      messagingSenderId: "916456119752",
+      appId: "1:916456119752:web:8b8636d97c0839ec8f74fd"
+    };
 
-      // Show updated vote counts
-      document.getElementById("results").innerHTML = `
-        <p>Candidate A: ${votesA} vote(s)</p>
-        <p>Candidate B: ${votesB} vote(s)</p>
-      `;
-    }
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    window.database = database; // Expose globally
   </script>
+
+  <!-- Load external JS -->
+  <script type="module" src="script.js"></script>
 
 </body>
 </html>

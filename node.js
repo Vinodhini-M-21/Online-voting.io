@@ -1,27 +1,22 @@
-// server.js
-const express = require('express');
-const cors = require('cors');
-const app = express();
-const PORT = 3000;
+import { ref, set } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
-app.use(cors());
-app.use(express.json());
+document.getElementById("voterForm").addEventListener("submit", function (e) {
+  e.preventDefault();
 
-let votes = {
-  'Candidate A': 0,
-  'Candidate B': 0
-};
+  const voterId = document.getElementById("voterId").value;
+  const name = document.getElementById("name").value;
+  const age = document.getElementById("age").value;
 
-app.post('/vote', (req, res) => {
-  const candidate = req.body.candidate;
-  if (votes[candidate] !== undefined) {
-    votes[candidate]++;
-    res.json({ message: `Vote casted for ${candidate}` });
-  } else {
-    res.status(400).json({ message: 'Invalid candidate' });
-  }
+  writeVoterData(voterId, name, age);
+
+  alert("Voter data submitted successfully!");
+  document.getElementById("voterForm").reset();
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+function writeVoterData(voterId, name, age) {
+  const db = window.database;
+  set(ref(db, 'voters/' + voterId), {
+    name: name,
+    age: parseInt(age)
+  });
+}

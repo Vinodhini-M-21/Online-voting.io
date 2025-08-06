@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Voter Login</title>
+</head>
+<body>
+  <h2>Login</h2>
+  <form id="loginForm">
+    <label for="voterId">Enter Voter ID:</label>
+    <input type="text" id="voterId" required>
+    <button type="submit">Login</button>
+  </form>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCsUz3pBqFgGmCRw6SIAdxlRb3zfSFYNq8",
+      authDomain: "online-voting-system-49fdb.firebaseapp.com",
+      databaseURL: "https://online-voting-system-49fdb-default-rtdb.firebaseio.com",
+      projectId: "online-voting-system-49fdb",
+      storageBucket: "online-voting-system-49fdb.appspot.com",
+      messagingSenderId: "916456119752",
+      appId: "1:916456119752:web:8b8636d97c0839ec8f74fd"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const voterId = document.getElementById("voterId").value;
+
+      const dbRef = ref(db);
+      get(child(dbRef, `voters/${voterId}`)).then((snapshot) => {
+        if (snapshot.exists()) {
+          alert("Login successful!");
+          // redirect to voting page
+          window.location.href = `vote.html?voterId=${voterId}`;
+        } else {
+          alert("Voter ID not found!");
+        }
+      }).catch((error) => {
+        console.error(error);
+      });
+    });
+  </script>
+</body>
+</html>

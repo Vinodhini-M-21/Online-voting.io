@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vote Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #e0f7fa;
+      text-align: center;
+      padding: 20px;
+    }
+    h2 {
+      color: #00796b;
+    }
+    .candidate {
+      display: inline-block;
+      margin: 15px;
+      padding: 15px;
+      border: 2px solid #00796b;
+      border-radius: 10px;
+      background: #ffffff;
+      cursor: pointer;
+      width: 200px;
+    }
+    .candidate:hover {
+      background: #b2dfdb;
+    }
+    #status {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Cast Your Vote</h2>
+
+  <div id="candidateList"></div>
+
+  <p id="status"></p>
+
+  <script type="module">
+    // 1. Import Firebase SDKs
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, get, child, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    // 2. Your Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    // 3. Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const dbRef = ref(db);
+
+    // 4. Get voter ID (for demo, using prompt)
+    const voterID = prompt("Enter your Voter ID to proceed:");
+
+    // 5. Prevent double voting
+    get(child(dbRef, `votes/${voterID}`)).then((snapshot) => {
+      if (snapshot.exists()) {
+        document.getElementById("candidateList").innerHTML = "<b>You have already voted.</b>";
+      } else {
+        loadCandidates();
+      }
+    });
+
+    // 6. Load candidate list
+    function loadCandidates() {
+      get(child(dbRef, "candidates")).then((snapshot) => {
+        if (snapshot.exists()) {
+          const candidates = snapshot.val();
+          const listDiv = document.getElementById("candidateList");
+
+          for (let key in candidates) {
+            const div = document.createElement("div");
+            div.className = "candidate";
+            div.innerHTML = `<h3>${candidates[key].name}</h3>
+                             <p>${candidates[key].party}</p>`;
+            div.onclick = () => castVote(key, candidates[key].name);
+            listDiv.appendChild(div);
+          }
+
+        } else {
+          document.getElementById("candidateList").innerHTML = "No candidates found.";
+        }
+      });
+    }
+
+    // 7. Cast vote
+    function castVote(candidateID, candidateName) {
+      const confirmVote = confirm(`Are you sure you want to vote for ${candidateName}?`);
+      if (!confirmVote) return;
+
+      set(ref(db, `votes/${voterID}`), {
+        votedFor: candidateID,
+        name: candidateName
+      }).then(() => {
+        document.getElementById("status").innerText = "✅ Your vote has been recorded!";
+        document.getElementById("candidateList").innerHTML = "";
+      }).catch((error) => {
+        document.getElementById("status").innerText = "❌ Error recording vote. Try again.";
+        console.error(error);
+      });
+    }
+  </script>
+
+</body>
+</html>
